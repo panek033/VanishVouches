@@ -131,8 +131,7 @@ client.on("interactionCreate", async (interaction) => {
           .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
           .addFields(
             { name: "🔑 License Key", value: `\`${key}\``, inline: false },
-            { name: "📌 Status", value: "Valid", inline: true },
-            { name: "🔗 Link", value: process.env.YOUR_LINK, inline: true }
+            { name: "🔗 Link", value: process.env.YOUR_LINK, inline: false }
           )
           .setFooter({ text: "Vanish | Auth Verification" })
           .setTimestamp();
