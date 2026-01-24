@@ -45,12 +45,12 @@ const commands = [
     .toJSON(),
 
   new SlashCommandBuilder()
-    .setName("loaded")
-    .setDescription("Check your KeyAuth license key")
+    .setName("loader")
+    .setDescription("Download loader")
     .addStringOption(option =>
       option
-        .setName("license_key")
-        .setDescription("Your KeyAuth license key")
+        .setName("licensey")
+        .setDescription("Your license key")
         .setRequired(true)
     )
     .toJSON(),
