@@ -84,7 +84,7 @@ client.on("interactionCreate", async (interaction) => {
     const rating = interaction.fields.getTextInputValue("rating");
     const desc = interaction.fields.getTextInputValue("desc");
 
-    const channel = interaction.guild.channels.cache.get(process.env.CHANNEL_ID);
+    const channel = await interaction.guild.channels.fetch(process.env.CHANNEL_ID);
 
     await channel.send(
       `⭐ **Rating:** ${rating}\n📝 **Vouch:** ${desc}`
