@@ -134,7 +134,7 @@ client.on("interactionCreate", async (interaction) => {
       const embed = new EmbedBuilder()
         .setColor(0x2f3136)
         .setTitle("Vanish Vouch")
-        .setThumbnail("https://github.com/panek033/VanishVouches/blob/main/vh.png")
+        .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
         .addFields(
           { name: "📦 Product", value: product, inline: true },
           { name: "Rating", value: stars(rating), inline: true },
