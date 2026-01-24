@@ -99,7 +99,7 @@ client.on("interactionCreate", async (interaction) => {
   }
 
   // NEW: /loaded command
- if (interaction.isChatInputCommand() && interaction.commandName === "loaded") {
+   if (interaction.isChatInputCommand() && interaction.commandName === "loaded") {
     const key = interaction.options.getString("license_key");
   
     try {
@@ -110,7 +110,7 @@ client.on("interactionCreate", async (interaction) => {
   
       if (!initData.success) {
         return interaction.reply({
-          content: "❌ Failed to initialize KeyAuth session.",
+          content: "Failed to initialize auth session.",
           ephemeral: true
         });
       }
@@ -123,19 +123,36 @@ client.on("interactionCreate", async (interaction) => {
       const licenseData = await licenseRes.json();
   
       if (licenseData.success) {
+  
+        // Create DM embed
+        const embed = new EmbedBuilder()
+          .setColor(0x2f3136)
+          .setTitle("Key Valid")
+          .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
+          .addFields(
+            { name: "🔑 License Key", value: `\`${key}\``, inline: false },
+            { name: "📌 Status", value: "Valid", inline: true },
+            { name: "🔗 Link", value: process.env.YOUR_LINK, inline: true }
+          )
+          .setFooter({ text: "Vanish | Auth Verification" })
+          .setTimestamp();
+  
+        // DM user
         const dm = await interaction.user.createDM();
-        await dm.send(`✅ Your key is valid! Here is your link: ${process.env.YOUR_LINK}`);
+        await dm.send({ embeds: [embed] });
   
         await interaction.reply({
-          content: "✅ Key is valid. Check your DMs!",
+          content: "Key is valid. Check your DMs!",
           ephemeral: true
         });
+  
       } else {
         await interaction.reply({
-          content: "❌ Invalid key. Please try again.",
+          content: "Invalid key. Please try again.",
           ephemeral: true
         });
       }
+  
     } catch (err) {
       console.error(err);
       await interaction.reply({
