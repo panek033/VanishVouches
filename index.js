@@ -23,7 +23,8 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages],
+  partials: ['CHANNEL'],
 });
 
 client.once("ready", () => {
@@ -41,14 +42,25 @@ const commands = [
   new SlashCommandBuilder()
     .setName("vouch")
     .setDescription("Submit an anonymous vouch")
-    .toJSON()
+    .toJSON(),
+
+  new SlashCommandBuilder()
+    .setName("loaded")
+    .setDescription("Check your KeyAuth license key")
+    .addStringOption(option =>
+      option
+        .setName("license_key")
+        .setDescription("Your KeyAuth license key")
+        .setRequired(true)
+    )
+    .toJSON(),
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
 (async () => {
   try {
-    console.log("Registering slash command...");
+    console.log("Registering slash commands...");
     await rest.put(
       Routes.applicationGuildCommands(
         process.env.CLIENT_ID,
@@ -56,7 +68,7 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
       ),
       { body: commands }
     );
-    console.log("Slash command registered");
+    console.log("Slash commands registered");
   } catch (err) {
     console.error(err);
   }
@@ -84,6 +96,39 @@ client.on("interactionCreate", async (interaction) => {
       components: [row],
       ephemeral: true
     });
+  }
+
+  // NEW: /loaded command
+  if (interaction.isChatInputCommand() && interaction.commandName === "loaded") {
+    const key = interaction.options.getString("license_key");
+
+    const url = `https://keyauth.win/api/1.0/?type=license&key=${key}&ownerid=${process.env.KEYAUTH_OWNERID}&app=${process.env.KEYAUTH_APP}`;
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.success) {
+        const dm = await interaction.user.createDM();
+        await dm.send(`✅ Your key is valid! Here is your link: ${process.env.YOUR_LINK}`);
+
+        await interaction.reply({
+          content: "✅ Key is valid. Check your DMs!",
+          ephemeral: true
+        });
+      } else {
+        await interaction.reply({
+          content: "❌ Invalid key. Please try again.",
+          ephemeral: true
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      await interaction.reply({
+        content: "❌ Error checking your key. Try again later.",
+        ephemeral: true
+      });
+    }
   }
 
   // Product selected → show modal
