@@ -132,14 +132,15 @@ client.on("interactionCreate", async (interaction) => {
       if (!channel) return;
 
       const embed = new EmbedBuilder()
-        .setColor(0x0aa2ff)
-        .setTitle("⭐ Vanish Vouch")
-        .setDescription("Anonymous customer feedback")
+        .setColor(0x2f3136)
+        .setTitle("Vanish Vouch")
+        .setThumbnail("https://github.com/panek033/VanishVouches/blob/main/vh.png")
         .addFields(
           { name: "📦 Product", value: product, inline: true },
-          { name: "⭐ Rating", value: stars(rating), inline: true },
+          { name: "Rating", value: stars(rating), inline: true },
           { name: "📝 Description", value: desc, inline: false }
         )
+        .setFooter({ text: "Anonymous customer feedback" })
         .setTimestamp();
 
       await channel.send({ embeds: [embed] });
