@@ -99,19 +99,33 @@ client.on("interactionCreate", async (interaction) => {
   }
 
   // NEW: /loaded command
-  if (interaction.isChatInputCommand() && interaction.commandName === "loaded") {
+ if (interaction.isChatInputCommand() && interaction.commandName === "loaded") {
     const key = interaction.options.getString("license_key");
-
-    const url = `https://keyauth.win/api/1.0/?type=license&key=${key}&ownerid=${process.env.KEYAUTH_OWNERID}&app=${process.env.KEYAUTH_APP}`;
-
+  
     try {
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (data.success) {
+      // 1) Init KeyAuth session
+      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
+      const initRes = await fetch(initUrl);
+      const initData = await initRes.json();
+  
+      if (!initData.success) {
+        return interaction.reply({
+          content: "❌ Failed to initialize KeyAuth session.",
+          ephemeral: true
+        });
+      }
+  
+      // 2) License check
+      const sessionid = initData.sessionid;
+      const licenseUrl = `https://keyauth.win/api/1.3/?type=license&key=${key}&sessionid=${sessionid}&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
+  
+      const licenseRes = await fetch(licenseUrl);
+      const licenseData = await licenseRes.json();
+  
+      if (licenseData.success) {
         const dm = await interaction.user.createDM();
         await dm.send(`✅ Your key is valid! Here is your link: ${process.env.YOUR_LINK}`);
-
+  
         await interaction.reply({
           content: "✅ Key is valid. Check your DMs!",
           ephemeral: true
@@ -125,7 +139,7 @@ client.on("interactionCreate", async (interaction) => {
     } catch (err) {
       console.error(err);
       await interaction.reply({
-        content: "❌ Error checking your key. Try again later.",
+        content: "❌ Error checking your key — please try again later.",
         ephemeral: true
       });
     }
