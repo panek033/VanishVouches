@@ -9,7 +9,9 @@ const {
   TextInputStyle,
   ActionRowBuilder,
   REST,
-  Routes
+  Routes,
+  EmbedBuilder,
+  StringSelectMenuBuilder
 } = require("discord.js");
 
 const express = require("express");
@@ -28,6 +30,12 @@ client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
+// ⭐ star helper
+function stars(count) {
+  const c = Math.max(1, Math.min(5, parseInt(count)));
+  return "⭐".repeat(c);
+}
+
 // REGISTER SLASH COMMAND
 const commands = [
   new SlashCommandBuilder()
@@ -42,7 +50,10 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
   try {
     console.log("Registering slash command...");
     await rest.put(
-      Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
+      Routes.applicationGuildCommands(
+        process.env.CLIENT_ID,
+        process.env.GUILD_ID
+      ),
       { body: commands }
     );
     console.log("Slash command registered");
@@ -53,11 +64,36 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
 client.on("interactionCreate", async (interaction) => {
 
+  // /vouch command → product dropdown
   if (interaction.isChatInputCommand() && interaction.commandName === "vouch") {
 
+    const select = new StringSelectMenuBuilder()
+      .setCustomId("vouchProduct")
+      .setPlaceholder("Select product")
+      .addOptions([
+        { label: "Eon Cheat", value: "Eon Cheat" },
+        { label: "Eon Account", value: "Eon Account" },
+        { label: "Discord Account", value: "Discord Account" },
+        { label: "Spoofer", value: "Spoofer" }
+      ]);
+
+    const row = new ActionRowBuilder().addComponents(select);
+
+    await interaction.reply({
+      content: "Choose the product you want to vouch for:",
+      components: [row],
+      ephemeral: true
+    });
+  }
+
+  // Product selected → show modal
+  if (interaction.isStringSelectMenu() && interaction.customId === "vouchProduct") {
+
+    const product = interaction.values[0];
+
     const modal = new ModalBuilder()
-      .setCustomId("vouchModal")
-      .setTitle("Anonymous Vouch");
+      .setCustomId(`vouchModal:${product}`)
+      .setTitle("Vanish Vouch");
 
     const rating = new TextInputBuilder()
       .setCustomId("rating")
@@ -79,12 +115,13 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.showModal(modal);
   }
 
-  if (interaction.isModalSubmit() && interaction.customId === "vouchModal") {
+  // Modal submit → send embed
+  if (interaction.isModalSubmit() && interaction.customId.startsWith("vouchModal:")) {
 
+    const product = interaction.customId.split(":")[1];
     const rating = interaction.fields.getTextInputValue("rating");
     const desc = interaction.fields.getTextInputValue("desc");
 
-    // Reply first (prevents timeout)
     await interaction.reply({
       content: "Your anonymous vouch was submitted ✅",
       ephemeral: true
@@ -92,13 +129,21 @@ client.on("interactionCreate", async (interaction) => {
 
     try {
       const channel = await interaction.guild.channels.fetch(process.env.VOUCH_CHANNEL);
+      if (!channel) return;
 
-      if (!channel) {
-        console.error("Vouch channel not found!");
-        return;
-      }
+      const embed = new EmbedBuilder()
+        .setColor(0x0aa2ff)
+        .setTitle("⭐ Vanish Vouch")
+        .setDescription("Anonymous customer feedback")
+        .addFields(
+          { name: "📦 Product", value: product, inline: true },
+          { name: "⭐ Rating", value: stars(rating), inline: true },
+          { name: "📝 Description", value: desc, inline: false }
+        )
+        .setTimestamp();
 
-      await channel.send(`⭐ **Rating:** ${rating}\n📝 **Vouch:** ${desc}`);
+      await channel.send({ embeds: [embed] });
+
     } catch (err) {
       console.error("Failed to send vouch:", err);
     }
