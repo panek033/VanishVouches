@@ -79,21 +79,29 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.showModal(modal);
   }
 
-  if (interaction.isModalSubmit() && interaction.customId === "vouchModal") {
-
-    const rating = interaction.fields.getTextInputValue("rating");
-    const desc = interaction.fields.getTextInputValue("desc");
-
-    const channel = await interaction.guild.channels.fetch(process.env.CHANNEL_ID);
-
-    await channel.send(
-      `⭐ **Rating:** ${rating}\n📝 **Vouch:** ${desc}`
-    );
-
-    await interaction.reply({
-      content: "Your anonymous vouch was submitted ✅",
-      ephemeral: true
-    });
+  if (interaction.isModalSubmit() && interaction.customId === "vouchModal") {  
+      const rating = interaction.fields.getTextInputValue("rating");
+      const desc = interaction.fields.getTextInputValue("desc");
+    
+      // Reply first
+      await interaction.reply({
+        content: "Your anonymous vouch was submitted ✅",
+        ephemeral: true
+      });
+    
+      // Then send to channel
+      try {
+        const channel = await interaction.guild.channels.fetch(process.env.VOUCH_CHANNEL);
+    
+        if (!channel) {
+          return console.error("Vouch channel not found!");
+        }
+    
+        await channel.send(`⭐ **Rating:** ${rating}\n📝 **Vouch:** ${desc}`);
+      } catch (err) {
+        console.error("Failed to send vouch:", err);
+      }
+    }
   }
 });
 
