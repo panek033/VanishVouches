@@ -49,7 +49,7 @@ const commands = [
     .setDescription("Download loader")
     .addStringOption(option =>
       option
-        .setName("licensey")
+        .setName("license")
         .setDescription("Your license key")
         .setRequired(true)
     )
