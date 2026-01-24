@@ -99,8 +99,8 @@ client.on("interactionCreate", async (interaction) => {
   }
 
   // NEW: /loaded command
-   if (interaction.isChatInputCommand() && interaction.commandName === "loaded") {
-    const key = interaction.options.getString("license_key");
+   if (interaction.isChatInputCommand() && interaction.commandName === "loader") {
+    const key = interaction.options.getString("license");
   
     try {
       // 1) Init KeyAuth session
