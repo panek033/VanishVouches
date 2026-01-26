@@ -43,72 +43,7 @@ const commands = [
     .setName("vouch")
     .setDescription("Submit an anonymous vouch")
     .toJSON(),
-
-  new SlashCommandBuilder()
-    .setName("changelog")
-    .setDescription("Post a changelog embed (Admins only)")
-    .addStringOption(option =>
-      option.setName("title")
-        .setDescription("Embed title")
-        .setRequired(true)
-    )
-    .addStringOption(option =>
-      option.setName("description")
-        .setDescription("Embed description")
-        .setRequired(true)
-    )
-    .addStringOption(option =>
-      option.setName("color")
-        .setDescription("Hex color (ex: #2f3136)")
-        .setRequired(false)
-    )
-    .addStringOption(option =>
-      option.setName("thumbnail")
-        .setDescription("Thumbnail image URL")
-        .setRequired(false)
-    )
-    .addStringOption(option =>
-      option.setName("image")
-        .setDescription("Banner image URL")
-        .setRequired(false)
-    )
-    .addStringOption(option =>
-      option.setName("footer")
-        .setDescription("Footer text")
-        .setRequired(false)
-    )
-    // Field 1
-    .addStringOption(option =>
-      option.setName("field1")
-        .setDescription("Field 1 (format: name|value|inline)")
-        .setRequired(false)
-    )
-    // Field 2
-    .addStringOption(option =>
-      option.setName("field2")
-        .setDescription("Field 2 (format: name|value|inline)")
-        .setRequired(false)
-    )
-    // Field 3
-    .addStringOption(option =>
-      option.setName("field3")
-        .setDescription("Field 3 (format: name|value|inline)")
-        .setRequired(false)
-    )
-    // Field 4
-    .addStringOption(option =>
-      option.setName("field4")
-        .setDescription("Field 4 (format: name|value|inline)")
-        .setRequired(false)
-    )
-    // Field 5
-    .addStringOption(option =>
-      option.setName("field5")
-        .setDescription("Field 5 (format: name|value|inline)")
-        .setRequired(false)
-    )
-    .toJSON(),
-
+  
   new SlashCommandBuilder()
     .setName("loader")
     .setDescription("Download loader")
