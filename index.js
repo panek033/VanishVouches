@@ -115,17 +115,10 @@ client.on("interactionCreate", async (interaction) => {
       const initDataToHash = `${process.env.KEYAUTH_APP}${process.env.KEYAUTH_OWNERID}`;
       const initHash = generateHash(initDataToHash, process.env.KEYAUTH_SECRET);
 
-      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${encodeURIComponent(process.env.KEYAUTH_APP)}&ownerid=${encodeURIComponent(process.env.KEYAUTH_OWNERID)}&hash=${initHash}`;
+      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}&hash=${process.env.HASH}`;
       //const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
       const initRes = await fetch(initUrl);
       const initData = await initRes.json();
-  
-      if (!initData.success) {
-        return interaction.reply({
-          content: "Failed to initialize auth session.",
-          ephemeral: true
-        });
-      }
 
       if (!initData.success) {
             return interaction.reply({
