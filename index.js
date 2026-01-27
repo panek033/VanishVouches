@@ -16,6 +16,7 @@ const {
 
 const express = require("express");
 const app = express();
+const crypto = require('crypto');
 
 // keep-alive server
 app.get("/", (req, res) => res.send("Bot alive"));
@@ -30,6 +31,13 @@ const client = new Client({
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
+
+// Generate hash for init request
+function generateHash(data, secret) {
+    return crypto.createHash('sha256')
+        .update(data + secret)
+        .digest('hex');
+}
 
 // ⭐ star helper
 function stars(count) {
@@ -104,7 +112,11 @@ client.on("interactionCreate", async (interaction) => {
   
     try {
       // 1) Init KeyAuth session
-      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
+      const initDataToHash = `${process.env.KEYAUTH_APP}${process.env.KEYAUTH_OWNERID}`;
+      const initHash = generateHash(initDataToHash, process.env.KEYAUTH_SECRET);
+
+      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${encodeURIComponent(process.env.KEYAUTH_APP)}&ownerid=${encodeURIComponent(process.env.KEYAUTH_OWNERID)}&hash=${initHash}`;
+      //const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
       const initRes = await fetch(initUrl);
       const initData = await initRes.json();
   
@@ -114,6 +126,13 @@ client.on("interactionCreate", async (interaction) => {
           ephemeral: true
         });
       }
+
+      if (!initData.success) {
+            return interaction.reply({
+                content: `Failed to initialize auth session. Error: ${initData.message || 'Unknown error'}`,
+                ephemeral: true
+            });
+        }
   
       // 2) License check
       const sessionid = initData.sessionid;
