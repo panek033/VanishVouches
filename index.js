@@ -98,47 +98,7 @@ client.on("interactionCreate", async (interaction) => {
     });
   }
 
-  // /changelog Command
-    if (interaction.isChatInputCommand() && interaction.commandName === "changelog") {
-  
-    if (!interaction.member.permissions.has("Administrator")) {
-      return interaction.reply({
-        content: "❌ You need to be an admin to use this command.",
-        ephemeral: true
-      });
-    }
-  
-    const title = interaction.options.getString("title");
-    const description = interaction.options.getString("description");
-    const color = interaction.options.getString("color") || "#2f3136";
-    const image = interaction.options.getString("image");
-    const footer = interaction.options.getString("footer");
-  
-    const embed = new EmbedBuilder()
-      .setTitle(title)
-      .setDescription(description)
-      .setColor(color);
-  
-    if (image) embed.setImage("https://raw.githubusercontent.com/panek033/VanishVouches/refs/heads/main/vanish_banner.png");
-    if (footer) embed.setFooter({ text: footer });
-  
-    // Add up to 5 fields if provided
-    for (let i = 1; i <= 5; i++) {
-      const field = interaction.options.getString(`field${i}`);
-      if (field) {
-        const [name, value, inline] = field.split("|");
-        embed.addFields({
-          name: name || "Field",
-          value: value || "No value provided",
-          inline: inline === "true" ? true : false
-        });
-      }
-    }
-  
-    await interaction.reply({ embeds: [embed], ephemeral: false });
-  }
-
-  // NEW: /loaded command
+  // loader command
    if (interaction.isChatInputCommand() && interaction.commandName === "loader") {
     const key = interaction.options.getString("license");
   
@@ -172,7 +132,7 @@ client.on("interactionCreate", async (interaction) => {
           .addFields(
             { name: "🔑 License Key", value: `\`${key}\``, inline: false },
             {
-              name: "🔗 Link",
+              name: "🔗 Download",
               value: `[Click here](${process.env.YOUR_LINK})`,
               inline: false
             }
@@ -199,7 +159,7 @@ client.on("interactionCreate", async (interaction) => {
     } catch (err) {
       console.error(err);
       await interaction.reply({
-        content: "❌ Error checking your key — please try again later.",
+        content: "Error checking your key — please try again later.",
         ephemeral: true
       });
     }
