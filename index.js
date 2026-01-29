@@ -152,6 +152,11 @@ client.on("interactionCreate", async (interaction) => {
               name: "🔗 Required .dll",
               value: `[Click here](${process.env.YOUR_LINK2})`,
               inline: false
+            },
+            {
+              name: "🔗 Crosshair X (Non Nvidia)",
+              value: `[Click here](${process.env.YOUR_LINK3})`,
+              inline: false
             }
           )
           .setFooter({ text: "Vanish | Auth Verification" })
