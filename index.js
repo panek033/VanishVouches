@@ -147,7 +147,7 @@ client.on("interactionCreate", async (interaction) => {
               name: "🔗 Loader Download",
               value: `[Click here](${process.env.YOUR_LINK})`,
               inline: false
-            }
+            },
             {
               name: "🔗 Required .dll",
               value: `[Click here](${process.env.YOUR_LINK2})`,
