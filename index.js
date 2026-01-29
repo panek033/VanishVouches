@@ -144,8 +144,13 @@ client.on("interactionCreate", async (interaction) => {
           .addFields(
             { name: "🔑 License Key", value: `\`${key}\``, inline: false },
             {
-              name: "🔗 Download",
+              name: "🔗 Loader Download",
               value: `[Click here](${process.env.YOUR_LINK})`,
+              inline: false
+            }
+            {
+              name: "🔗 Required .dll",
+              value: `[Click here](${process.env.YOUR_LINK2})`,
               inline: false
             }
           )
