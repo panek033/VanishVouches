@@ -58,7 +58,7 @@ const commands = [
     .toJSON(),
   
   new SlashCommandBuilder()
-    .setName("license")
+    .setName("loader")
     .setDescription("Enter your license key to download the loader")
     .toJSON(),
 ];
@@ -114,7 +114,7 @@ client.on("interactionCreate", async (interaction) => {
       .addFields(
         {
           name: "🔹 Step 1 — Download Loader",
-          value: "Use `/loader` and enter your license key when propmted to download the loader.",
+          value: "Use `/loader` and enter your license key when prompted to download the loader.",
         },
         {
           name: "🔹 Step 2 — Disable Antivirus",
@@ -126,15 +126,15 @@ client.on("interactionCreate", async (interaction) => {
         },
         {
           name: "🔹 Step 4 — Enable Discord/Nvida Overlay",
-          value: "You can chose which one you want to use, nvidia is only for nvidia gpus. The cheat itself first check for nvidia overlay.",
+          value: "You can chose which one you want to use, nvidia is **only** for nvidia gpus. The cheat itself first checks for nvidia overlay.",
         },
         {
           name: "🔹 Step 5 — Run Loader As Admin",
-          value: "Always run loader as admin to avoid errors.",
+          value: "Always run loader as **Admin** to avoid errors.",
         },
         {
           name: "🔹 Step 6 — Settings",
-          value: "Make sure Fortnite is running in Fullscreen Windowed Mode! Menu key by default is Right Shift.",
+          value: "Make sure Fortnite is running in **Fullscreen Windowed** mode! Menu key by default is Right Shift.",
         },
         {
           name: "⚠️ Important",
