@@ -51,16 +51,15 @@ const commands = [
     .setName("vouch")
     .setDescription("Submit an anonymous vouch")
     .toJSON(),
+
+  new SlashCommandBuilder()
+    .setName("guide")
+    .setDescription("Display guide for Vanish")
+    .toJSON(),
   
   new SlashCommandBuilder()
-    .setName("loader")
-    .setDescription("Download loader")
-    .addStringOption(option =>
-      option
-        .setName("license")
-        .setDescription("Your license key")
-        .setRequired(true)
-    )
+    .setName("license")
+    .setDescription("Enter your license key to download the loader")
     .toJSON(),
 ];
 
@@ -106,81 +105,131 @@ client.on("interactionCreate", async (interaction) => {
     });
   }
 
+  // Guide Command
+  if (interaction.isChatInputCommand() && interaction.commandName === "guide") {
+     const guideEmbed = new EmbedBuilder()
+      .setColor(0x2f3136)
+      .setTitle("📘 Vanish Guide")
+      .setDescription("Welcome to the Vanish guide. Follow the steps below to get started safely and correctly.")
+      .addFields(
+        {
+          name: "🔹 Step 1 — Download Loader",
+          value: "Use `/loader` and enter your license key when propmted to download the loader.",
+        },
+        {
+          name: "🔹 Step 2 — Disable Antivirus",
+          value: "Disable Windows Defender or any antivirus to avoid the loader being deleted.",
+        },
+        {
+          name: "🔹 Step 3 — Disable Hardware Acceleration",
+          value: "Disable hardware acceleration",
+        },
+        {
+          name: "🔹 Step 4 — Enable Discord/Nvida Overlay",
+          value: "You can chose which one you want to use, nvidia is only for nvidia gpus. The cheat itself first check for nvidia overlay.",
+        },
+        {
+          name: "🔹 Step 5 — Run Loader As Admin",
+          value: "Always run loader as admin to avoid errors.",
+        },
+        {
+          name: "🔹 Step 6 — Settings",
+          value: "Make sure Fortnite is running in Fullscreen Windowed Mode! Menu key by default is Right Shift.",
+        },
+        {
+          name: "⚠️ Important",
+          value: "Do **not** share your license key. Keep it private.",
+        }
+      )
+      .setFooter({ text: "Vanish • Official Guide" });
+  
+    await interaction.reply({
+      embeds: [guideEmbed],
+      ephemeral: true
+    });
+  }
+
   // loader command
    if (interaction.isChatInputCommand() && interaction.commandName === "loader") {
-    const key = interaction.options.getString("license");
+     const modal = new ModalBuilder()
+      .setCustomId("licenseModal")
+      .setTitle("Enter Your License Key");
+  
+    const licenseInput = new TextInputBuilder()
+      .setCustomId("licenseKey")
+      .setLabel("License Key")
+      .setStyle(TextInputStyle.Short)
+      .setRequired(true);
+  
+    modal.addComponents(
+      new ActionRowBuilder().addComponents(licenseInput)
+    );
+  
+    await interaction.showModal(modal);
+  }
+  
+  // License modal submit
+  if (interaction.isModalSubmit() && interaction.customId === "licenseModal") {
+  
+    const key = interaction.fields.getTextInputValue("licenseKey");
   
     try {
-      // 1) Init KeyAuth session
-      const initDataToHash = `${process.env.KEYAUTH_APP}${process.env.KEYAUTH_OWNERID}`;
-      const initHash = generateHash(initDataToHash, process.env.KEYAUTH_SECRET);
-
-      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}&hash=${process.env.HASH}`;
-      //const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
+      // Init KeyAuth
+      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
       const initRes = await fetch(initUrl);
       const initData = await initRes.json();
-
+  
       if (!initData.success) {
-            return interaction.reply({
-                content: `Failed to initialize auth session. Error: ${initData.message || 'Unknown error'}`,
-                ephemeral: true
-            });
-        }
+        return interaction.reply({
+          content: "Failed to initialize auth session.",
+          ephemeral: true
+        });
+      }
   
-      // 2) License check
       const sessionid = initData.sessionid;
-      const licenseUrl = `https://keyauth.win/api/1.3/?type=license&key=${key}&sessionid=${sessionid}&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
   
+      // License check
+      const licenseUrl = `https://keyauth.win/api/1.3/?type=license&key=${key}&sessionid=${sessionid}&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
       const licenseRes = await fetch(licenseUrl);
       const licenseData = await licenseRes.json();
   
-      if (licenseData.success) {
-  
-        // Create DM embed
-        const embed = new EmbedBuilder()
-          .setColor(0x2f3136)
-          .setTitle("Key Valid")
-          .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
-          .addFields(
-            { name: "🔑 License Key", value: `\`${key}\``, inline: false },
-            {
-              name: "🔗 Loader Download",
-              value: `[Click here](${process.env.YOUR_LINK})`,
-              inline: false
-            },
-            {
-              name: "🔗 Required .dll",
-              value: `[Click here](${process.env.YOUR_LINK2})`,
-              inline: false
-            }
-          )
-          .setFooter({ text: "Vanish | Auth Verification" })
-          .setTimestamp();
-  
-        // DM user
-        const dm = await interaction.user.createDM();
-        await dm.send({ embeds: [embed] });
-  
-        await interaction.reply({
-          content: "Key is valid. Check your DMs!",
-          ephemeral: true
-        });
-  
-      } else {
-        await interaction.reply({
+      if (!licenseData.success) {
+        return interaction.reply({
           content: "Invalid key. Please try again.",
           ephemeral: true
         });
       }
   
+      // Send DM with loader
+      const embed = new EmbedBuilder()
+        .setColor(0x2f3136)
+        .setTitle("Key Valid ✅")
+        .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
+        .addFields(
+          { name: "🔑 License Key", value: `\`${key}\`` },
+          { name: "🔗 Loader Download", value: `[Click here](${process.env.YOUR_LINK})` },
+          { name: "🔗 Required .dll", value: `[Click here](${process.env.YOUR_LINK2})` }
+        )
+        .setFooter({ text: "Vanish | Auth Verification" })
+        .setTimestamp();
+  
+      const dm = await interaction.user.createDM();
+      await dm.send({ embeds: [embed] });
+  
+      await interaction.reply({
+        content: "Key valid. Check your DMs!",
+        ephemeral: true
+      });
+  
     } catch (err) {
       console.error(err);
       await interaction.reply({
-        content: "Error checking your key — please try again later.",
+        content: "Error checking your key — try again later.",
         ephemeral: true
       });
     }
   }
+  
 
   // Product selected → show modal
   if (interaction.isStringSelectMenu() && interaction.customId === "vouchProduct") {
