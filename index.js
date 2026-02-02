@@ -144,8 +144,7 @@ client.on("interactionCreate", async (interaction) => {
       .setFooter({ text: "Vanish • Official Guide" });
   
     await interaction.reply({
-      embeds: [guideEmbed],
-      ephemeral: true
+      embeds: [guideEmbed]
     });
   }
 
@@ -175,7 +174,7 @@ client.on("interactionCreate", async (interaction) => {
   
     try {
       // Init KeyAuth
-      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
+      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}&hash=${process.env.HASH}`;
       const initRes = await fetch(initUrl);
       const initData = await initRes.json();
   
