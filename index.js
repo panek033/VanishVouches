@@ -59,7 +59,12 @@ const commands = [
   
   new SlashCommandBuilder()
     .setName("loader")
-    .setDescription("Enter your license key to download the loader")
+    .setDescription("Enter your login info to download the loader")
+    .toJSON(),
+
+  new SlashCommandBuilder()
+    .setName("register")
+    .setDescription("Register in vanish")
     .toJSON(),
 ];
 
@@ -113,32 +118,36 @@ client.on("interactionCreate", async (interaction) => {
       .setDescription("Welcome to the Vanish guide. Follow the steps below to get started safely and correctly.")
       .addFields(
         {
-          name: "🔹 Step 1 — Download Loader",
-          value: "Use `/loader` and enter your license key when prompted to download the loader.",
+          name: "🔹 Step 1 — Register",
+          value: "Use `/register` to create an account for you in vanish, using your license.",
         },
         {
-          name: "🔹 Step 2 — Disable Antivirus",
+          name: "🔹 Step 2 — Download Loader",
+          value: "Use `/loader' enter your username and password to get download link.",
+        },
+        {
+          name: "🔹 Step 3 — Disable Antivirus",
           value: "Disable Windows Defender or any antivirus to avoid the loader being deleted.",
         },
         {
-          name: "🔹 Step 3 — Disable Hardware Acceleration",
-          value: "Disable hardware acceleration",
-        },
-        {
-          name: "🔹 Step 4 — Enable Discord/Nvida Overlay",
-          value: "You can chose which one you want to use, nvidia is **only** for nvidia gpus. The cheat itself first checks for nvidia overlay.",
+          name: "🔹 Step 4 — Enable Discord Overlay",
+          value: "Use new version, not legacy. Later in-game makse sure it shows up.",
         },
         {
           name: "🔹 Step 5 — Run Loader As Admin",
           value: "Always run loader as **Admin** to avoid errors.",
         },
         {
-          name: "🔹 Step 6 — Settings",
+          name: "🔹 Step 6 — Register In Loader",
+          value: "Under Login button there is a text 'Dont have an account?' press it and you will be on register page.",
+        },
+        {
+          name: "🔹 Step 7 — Settings",
           value: "Make sure Fortnite is running in **Fullscreen Windowed** mode! Menu key by default is Right Shift.",
         },
         {
           name: "⚠️ Important",
-          value: "Do **not** share your license key. Keep it private.",
+          value: "Do **not** share your login info, doing so will lead to a ban. Keep it private.",
         }
       )
       .setFooter({ text: "Vanish • Official Guide" });
@@ -152,16 +161,23 @@ client.on("interactionCreate", async (interaction) => {
    if (interaction.isChatInputCommand() && interaction.commandName === "loader") {
      const modal = new ModalBuilder()
       .setCustomId("licenseModal")
-      .setTitle("Enter Your License Key");
+      .setTitle("Loader Download");
   
-    const licenseInput = new TextInputBuilder()
-      .setCustomId("licenseKey")
-      .setLabel("License Key")
+    const userInput = new TextInputBuilder()
+      .setCustomId("username")
+      .setLabel("Username")
       .setStyle(TextInputStyle.Short)
+      .setRequired(true);
+
+    const passInput = new TextInputBuilder()
+      .setCustomId("password")
+      .setLabel("Password")
+      .setStyle(TextInputStyle.Short) // use Paragraph if you want hidden typing workaround
       .setRequired(true);
   
     modal.addComponents(
-      new ActionRowBuilder().addComponents(licenseInput)
+      new ActionRowBuilder().addComponents(userInput),
+      new ActionRowBuilder().addComponents(passInput)
     );
   
     await interaction.showModal(modal);
@@ -170,22 +186,21 @@ client.on("interactionCreate", async (interaction) => {
   // License modal submit
   if (interaction.isModalSubmit() && interaction.customId === "licenseModal") {
   
-    const key = interaction.fields.getTextInputValue("licenseKey");
+    const username = interaction.fields.getTextInputValue("username");
+    const password = interaction.fields.getTextInputValue("password");
   
     try {
       // Init KeyAuth
-      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}&hash=${process.env.HASH}`;
-      const initRes = await fetch(initUrl);
-      const initData = await initRes.json();
+      const loginUrl = `https://keyauth.win/api/1.3/?type=login&username=${encodeURIComponent(username)}&pass=${encodeURIComponent(password)}&sessionid=${sessionid}&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
+      const loginRes = await fetch(loginUrl);
+      const loginData = await loginRes.json();
   
-      if (!initData.success) {
+      if (!loginData.success) {
         return interaction.reply({
-          content: "Failed to initialize auth session.",
+          content: "Invalid username or password.",
           ephemeral: true
         });
       }
-  
-      const sessionid = initData.sessionid;
   
       // License check
       const licenseUrl = `https://keyauth.win/api/1.3/?type=license&key=${key}&sessionid=${sessionid}&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
@@ -194,7 +209,7 @@ client.on("interactionCreate", async (interaction) => {
   
       if (!licenseData.success) {
         return interaction.reply({
-          content: "Invalid key. Please try again.",
+          content: "Invalid username or password.",
           ephemeral: true
         });
       }
@@ -205,25 +220,25 @@ client.on("interactionCreate", async (interaction) => {
         .setTitle("Key Valid ✅")
         .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
         .addFields(
-          { name: "🔑 License Key", value: `\`${key}\`` },
-          { name: "🔗 Loader Download", value: `[Click here](${process.env.YOUR_LINK})` },
-          { name: "🔗 Required .dll", value: `[Click here](${process.env.YOUR_LINK2})` }
+          { name: "👤 Username", value: `\`${username}\`` },
+          { name: "🔑 Password", value: `||${password}||` },
+          { name: "🔗 Loader Download", value: `[Click here](${process.env.YOUR_LINK})` }
         )
-        .setFooter({ text: "Vanish | Auth Verification" })
+        .setFooter({ text: "Vanish Discord Bot" })
         .setTimestamp();
   
       const dm = await interaction.user.createDM();
       await dm.send({ embeds: [embed] });
   
       await interaction.reply({
-        content: "Key valid. Check your DMs!",
+        content: "Login Succesfull. Check your DMs!",
         ephemeral: true
       });
   
     } catch (err) {
       console.error(err);
       await interaction.reply({
-        content: "Error checking your key — try again later.",
+        content: "Auth handshake error, try again later.",
         ephemeral: true
       });
     }
