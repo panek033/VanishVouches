@@ -183,19 +183,44 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.showModal(modal);
   }
   
-  // License modal submit
-  if (interaction.isModalSubmit() && interaction.customId === "licenseModal") {
+    // License modal submit
+   if (interaction.isModalSubmit() && interaction.customId === "licenseModal") {
   
     const username = interaction.fields.getTextInputValue("username");
     const password = interaction.fields.getTextInputValue("password");
   
     try {
-      // Init KeyAuth
+  
+      // ---------------- INIT ----------------
+      const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}&hash=${process.env.HASH}`;
+  
+      const initRes = await fetch(initUrl);
+      const initData = await initRes.json();
+  
+      if (!initData.success) {
+        console.log(initData);
+        return interaction.reply({
+          content: "Auth init failed.",
+          ephemeral: true
+        });
+      }
+  
+      const sessionid = initData.sessionid;
+  
+      // Required handshake hash
+      const hash = crypto
+        .createHash("sha256")
+        .update(process.env.KEYAUTH_SECRET)
+        .digest("hex");
+  
+      // ---------------- LOGIN ----------------
       const loginUrl = `https://keyauth.win/api/1.3/?type=login&username=${encodeURIComponent(username)}&pass=${encodeURIComponent(password)}&sessionid=${sessionid}&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
+  
       const loginRes = await fetch(loginUrl);
       const loginData = await loginRes.json();
   
       if (!loginData.success) {
+        console.log(loginData);
         return interaction.reply({
           content: "Invalid username or password.",
           ephemeral: true
