@@ -232,13 +232,13 @@ client.on("interactionCreate", async (interaction) => {
         // ---------------- SUCCESS ----------------
         const embed = new EmbedBuilder()
           .setColor(0x2f3136)
-          .setTitle("Registration Successful ✅")
+          .setTitle("Registration Successful")
           .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
           .addFields(
             { name: "👤 Username", value: `\`${username}\``, inline: true },
             { name: "🔑 Password", value: `||${password}||`, inline: true },
             { name: "\u200B", value: "\u200B" }, // optional spacer
-            { name: "📦 Status", value: "Account created successfully. You can now use `/loader`.", inline: false }
+            { name: "📦 Status", value: "Account created successfully.", inline: false }
           )
           .setFooter({ text: "Vanish Discord Bot" })
           .setTimestamp();
@@ -335,7 +335,7 @@ client.on("interactionCreate", async (interaction) => {
       // Send DM with loader
       const embed = new EmbedBuilder()
         .setColor(0x2f3136)
-        .setTitle("Key Valid ✅")
+        .setTitle("Loader Download")
         .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
         .addFields(
             { name: "👤 Username", value: `\`${username}\``, inline: true },
