@@ -123,7 +123,7 @@ client.on("interactionCreate", async (interaction) => {
         },
         {
           name: "🔹 Step 2 — Download Loader",
-          value: "Use `/loader' enter your username and password to get download link.",
+          value: "Use `/loader` enter your username and password to get download link.",
         },
         {
           name: "🔹 Step 3 — Disable Antivirus",
