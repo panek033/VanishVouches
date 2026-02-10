@@ -115,7 +115,7 @@ client.on("interactionCreate", async (interaction) => {
      const guideEmbed = new EmbedBuilder()
       .setColor(0x2f3136)
       .setTitle("Vanish Guide")
-      .setDescription("[Youtube Video](https://www.youtube.com/watch?v=wiTeLu69JzI)")
+      .setDescription("[Youtube Video Tutorial](https://youtu.be/db0tEYnaXVQ)")
       .addFields(
         {
           name: "🔹 Step 1 — Register",
