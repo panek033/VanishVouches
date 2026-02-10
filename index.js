@@ -202,18 +202,6 @@ client.on("interactionCreate", async (interaction) => {
         });
       }
   
-      // License check
-      const licenseUrl = `https://keyauth.win/api/1.3/?type=license&key=${key}&sessionid=${sessionid}&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
-      const licenseRes = await fetch(licenseUrl);
-      const licenseData = await licenseRes.json();
-  
-      if (!licenseData.success) {
-        return interaction.reply({
-          content: "Invalid username or password.",
-          ephemeral: true
-        });
-      }
-  
       // Send DM with loader
       const embed = new EmbedBuilder()
         .setColor(0x2f3136)
