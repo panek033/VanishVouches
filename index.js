@@ -114,8 +114,8 @@ client.on("interactionCreate", async (interaction) => {
   if (interaction.isChatInputCommand() && interaction.commandName === "guide") {
      const guideEmbed = new EmbedBuilder()
       .setColor(0x2f3136)
-      .setTitle("📘 Vanish Guide")
-      .setDescription("Welcome to the Vanish guide. Follow the steps below to get started safely and correctly.")
+      .setTitle("Vanish Guide")
+      .setDescription("[Youtube Video](https://www.youtube.com/watch?v=wiTeLu69JzI)")
       .addFields(
         {
           name: "🔹 Step 1 — Register",
@@ -143,7 +143,7 @@ client.on("interactionCreate", async (interaction) => {
         },
         {
           name: "🔹 Step 7 — Settings",
-          value: "Make sure Fortnite is running in **Fullscreen Windowed** mode! Menu key by default is Right Shift.",
+          value: "Make sure Fortnite is running on **Performance Mode & Fullscreen Windowed** mode! Menu key by default is Right Shift.",
         },
         {
           name: "⚠️ Important",
