@@ -153,7 +153,8 @@ client.on("interactionCreate", async (interaction) => {
       .setFooter({ text: "Vanish • Official Guide" });
   
     await interaction.reply({
-      embeds: [guideEmbed]
+      embeds: [guideEmbed],
+      Ephemeral: true
     });
   }
 
