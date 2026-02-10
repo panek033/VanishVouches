@@ -154,7 +154,7 @@ client.on("interactionCreate", async (interaction) => {
   
     await interaction.reply({
       embeds: [guideEmbed],
-      Ephemeral: true
+      ephemeral: true
     });
   }
 
