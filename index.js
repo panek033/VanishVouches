@@ -157,6 +157,111 @@ client.on("interactionCreate", async (interaction) => {
     });
   }
 
+      // /register command
+    if (interaction.isChatInputCommand() && interaction.commandName === "register") {
+    
+      const modal = new ModalBuilder()
+        .setCustomId("registerModal")
+        .setTitle("Vanish Register");
+    
+      const userInput = new TextInputBuilder()
+        .setCustomId("reg_username")
+        .setLabel("Username")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+    
+      const passInput = new TextInputBuilder()
+        .setCustomId("reg_password")
+        .setLabel("Password")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+    
+      const licenseInput = new TextInputBuilder()
+        .setCustomId("reg_license")
+        .setLabel("License Key")
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+    
+      modal.addComponents(
+        new ActionRowBuilder().addComponents(userInput),
+        new ActionRowBuilder().addComponents(passInput),
+        new ActionRowBuilder().addComponents(licenseInput)
+      );
+    
+      await interaction.showModal(modal);
+    }
+
+    // Register modal submit
+    if (interaction.isModalSubmit() && interaction.customId === "registerModal") {
+    
+      const username = interaction.fields.getTextInputValue("reg_username");
+      const password = interaction.fields.getTextInputValue("reg_password");
+      const license = interaction.fields.getTextInputValue("reg_license");
+    
+      try {
+    
+        // ---------------- INIT ----------------
+        const initUrl = `https://keyauth.win/api/1.3/?type=init&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}&hash=${process.env.HASH}`;
+        const initRes = await fetch(initUrl);
+        const initData = await initRes.json();
+    
+        if (!initData.success) {
+          console.log(initData);
+          return interaction.reply({
+            content: "Auth init failed.",
+            ephemeral: true
+          });
+        }
+    
+        const sessionid = initData.sessionid;
+    
+        // ---------------- REGISTER ----------------
+        const registerUrl = `https://keyauth.win/api/1.3/?type=register&username=${encodeURIComponent(username)}&pass=${encodeURIComponent(password)}&key=${encodeURIComponent(license)}&sessionid=${sessionid}&name=${process.env.KEYAUTH_APP}&ownerid=${process.env.KEYAUTH_OWNERID}`;
+    
+        const registerRes = await fetch(registerUrl);
+        const registerData = await registerRes.json();
+    
+        if (!registerData.success) {
+          console.log(registerData);
+          return interaction.reply({
+            content: `Register failed: ${registerData.message}`,
+            ephemeral: true
+          });
+        }
+    
+        // ---------------- SUCCESS ----------------
+        const embed = new EmbedBuilder()
+          .setColor(0x2f3136)
+          .setTitle("Registration Successful ✅")
+          .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
+          .addFields(
+            { name: "👤 Username", value: `\`${username}\``, inline: true },
+            { name: "🔑 Password", value: `||${password}||`, inline: true },
+            { name: "\u200B", value: "\u200B" }, // optional spacer
+            { name: "📦 Status", value: "Account created successfully. You can now use `/loader`.", inline: false }
+          )
+          .setFooter({ text: "Vanish Discord Bot" })
+          .setTimestamp();
+    
+        const dm = await interaction.user.createDM();
+        await dm.send({ embeds: [embed] });
+    
+        await interaction.reply({
+          content: "Account created. Check your DMs!",
+          ephemeral: true
+        });
+    
+      } catch (err) {
+        console.error("Register error:", err);
+        await interaction.reply({
+          content: "Auth register error, try again later.",
+          ephemeral: true
+        });
+      }
+}
+
+
+
   // loader command
    if (interaction.isChatInputCommand() && interaction.commandName === "loader") {
      const modal = new ModalBuilder()
@@ -233,9 +338,10 @@ client.on("interactionCreate", async (interaction) => {
         .setTitle("Key Valid ✅")
         .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
         .addFields(
-          { name: "👤 Username", value: `\`${username}\`` },
-          { name: "🔑 Password", value: `||${password}||` },
-          { name: "🔗 Loader Download", value: `[Click here](${process.env.YOUR_LINK})` }
+            { name: "👤 Username", value: `\`${username}\``, inline: true },
+            { name: "🔑 Password", value: `||${password}||`, inline: true },
+            { name: "\u200B", value: "\u200B" }, // optional spacer
+            { name: "🔗 Loader Download", value: `[Click here](${process.env.YOUR_LINK})`, inline: false }
         )
         .setFooter({ text: "Vanish Discord Bot" })
         .setTimestamp();
