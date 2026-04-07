@@ -95,9 +95,8 @@ client.on("interactionCreate", async (interaction) => {
       .setCustomId("vouchProduct")
       .setPlaceholder("Select product")
       .addOptions([
-        { label: "Eon Cheat", value: "Eon Cheat" },
-        { label: "Eon Account", value: "Eon Account" },
-        { label: "Discord Account", value: "Discord Account" },
+        { label: "Fortnite Public", value: "Fortnite Public" },
+        { label: "Fortnite Slotted", value: "Fortnite Slotted" },
         { label: "Spoofer", value: "Spoofer" }
       ]);
 
@@ -150,7 +149,7 @@ client.on("interactionCreate", async (interaction) => {
           value: "Do **not** share your login info, doing so will lead to a ban. Keep it private.",
         }
       )
-      .setFooter({ text: "Vanish • Official Guide" });
+      .setFooter({ text: "Vanish 2.0 • Official Guide" });
   
     await interaction.reply({
       embeds: [guideEmbed],
@@ -163,7 +162,7 @@ client.on("interactionCreate", async (interaction) => {
     
       const modal = new ModalBuilder()
         .setCustomId("registerModal")
-        .setTitle("Vanish Register");
+        .setTitle("Vanish registration");
     
       const userInput = new TextInputBuilder()
         .setCustomId("reg_username")
@@ -233,15 +232,15 @@ client.on("interactionCreate", async (interaction) => {
         // ---------------- SUCCESS ----------------
         const embed = new EmbedBuilder()
           .setColor(0x2f3136)
-          .setTitle("Registration Successful")
+          .setTitle("Registration successful")
           .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
           .addFields(
-            { name: "👤 Username", value: `\`${username}\``, inline: true },
-            { name: "🔑 Password", value: `||${password}||`, inline: true },
+            { name: "👤 username", value: `\`${username}\``, inline: true },
+            { name: "🗝️ password", value: `||${password}||`, inline: true },
             { name: "\u200B", value: "\u200B" }, // optional spacer
-            { name: "📦 Status", value: "Account created successfully.", inline: false }
+            { name: "📦 status", value: "Account created successfully.", inline: false }
           )
-          .setFooter({ text: "Vanish Discord Bot" })
+          .setFooter({ text: "Vanish 2.0" })
           .setTimestamp();
     
         const dm = await interaction.user.createDM();
@@ -336,15 +335,15 @@ client.on("interactionCreate", async (interaction) => {
       // Send DM with loader
       const embed = new EmbedBuilder()
         .setColor(0x2f3136)
-        .setTitle("Loader Download")
+        .setTitle("Loader download")
         .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
         .addFields(
-            { name: "👤 Username", value: `\`${username}\``, inline: true },
-            { name: "🔑 Password", value: `||${password}||`, inline: true },
+            { name: "👤 username", value: `\`${username}\``, inline: true },
+            { name: "🗝️ password", value: `||${password}||`, inline: true },
             { name: "\u200B", value: "\u200B" }, // optional spacer
-            { name: "🔗 Loader Download", value: `[Click here](${process.env.YOUR_LINK})`, inline: false }
+            { name: "🔗 download link", value: `[Click here](${process.env.YOUR_LINK})`, inline: false }
         )
-        .setFooter({ text: "Vanish Discord Bot" })
+        .setFooter({ text: "vanish 2.0" })
         .setTimestamp();
   
       const dm = await interaction.user.createDM();
@@ -412,12 +411,12 @@ client.on("interactionCreate", async (interaction) => {
 
       const embed = new EmbedBuilder()
         .setColor(0x2f3136)
-        .setTitle("Vanish Vouch")
+        .setTitle("Vanish vouch")
         .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
         .addFields(
-          { name: "📦 Product", value: product, inline: true },
-          { name: "Rating", value: stars(rating), inline: true },
-          { name: "📝 Description", value: desc, inline: false }
+          { name: "📦 product", value: product, inline: true },
+          { name: "✨ rating", value: stars(rating), inline: true },
+          { name: "📝 description", value: desc, inline: false }
         )
         .setFooter({ text: "Anonymous customer feedback" })
         .setTimestamp();
