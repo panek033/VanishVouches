@@ -115,7 +115,7 @@ client.on("interactionCreate", async (interaction) => {
      const guideEmbed = new EmbedBuilder()
       .setColor(0x2f3136)
       .setTitle("Vanish Guide")
-      .setDescription("[Youtube Video Tutorial](https://youtu.be/db0tEYnaXVQ)")
+      .setDescription("Enjoy")
       .addFields(
         {
           name: "🔹 Step 1 — Register",
@@ -143,7 +143,7 @@ client.on("interactionCreate", async (interaction) => {
         },
         {
           name: "🔹 Step 7 — Settings",
-          value: "Make sure Fortnite is running on **Performance Mode & Fullscreen Windowed** mode! Menu key by default is Right Shift.",
+          value: "Make sure Fortnite is running on **Fullscreen Windowed** mode! Menu key by default is Right Shift.",
         },
         {
           name: "⚠️ Important",
