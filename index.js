@@ -341,7 +341,7 @@ client.on("interactionCreate", async (interaction) => {
             { name: "👤 username", value: `\`${username}\``, inline: true },
             { name: "🗝️ password", value: `||${password}||`, inline: true },
             { name: "\u200B", value: "\u200B" }, // optional spacer
-            { name: "🔗 download link", value: `[Click here](${process.env.YOUR_LINK})`, inline: false }
+            { name: "🔗 download link", value: `[click here](${process.env.YOUR_LINK})`, inline: false }
         )
         .setFooter({ text: "vanish 2.0" })
         .setTimestamp();
@@ -414,9 +414,9 @@ client.on("interactionCreate", async (interaction) => {
         .setTitle("Vanish vouch")
         .setThumbnail("https://raw.githubusercontent.com/panek033/VanishVouches/main/vh.png")
         .addFields(
-          { name: "📦 product", value: product, inline: true },
-          { name: "✨ rating", value: stars(rating), inline: true },
-          { name: "📝 description", value: desc, inline: false }
+          { name: "Product:", value: product, inline: true },
+          { name: "Rating:", value: stars(rating), inline: true },
+          { name: "Description:", value: desc, inline: false }
         )
         .setFooter({ text: "Anonymous customer feedback" })
         .setTimestamp();
